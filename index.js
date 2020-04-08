@@ -1,5 +1,5 @@
 
-const fs = require('fs')
+const fs = require('file-system')
 
 console.log("Hello from action");
 
