@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"dist": "npx ncc build index.js -o dist"
+    "dist": "npx ncc build index.js -o dist"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,7 @@
     "url": "https://github.com/ZeroWasteTeam/action-read-base-version/issues"
   },
   "homepage": "https://github.com/ZeroWasteTeam/action-read-base-version#readme",
-  "dependencies": {
-    "file-system": "^2.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@zeit/ncc": "^0.22.1"
   }
