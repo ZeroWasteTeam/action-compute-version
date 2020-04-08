@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Regex = require('regex');
 const core = require('@actions/core');
+const github = require('@actions/github');
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
@@ -10,6 +11,9 @@ const isReleaseFlow = core.getInput('is-release-flow');
 const currentBranchName = core.getInput('current-branch');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
+
+
+console.log(JSON.stringfy(github, null, "\t"))
 
 
 
