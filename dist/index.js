@@ -3228,8 +3228,19 @@ const fs = __webpack_require__(747);
 const Regex = __webpack_require__(409);
 const core = __webpack_require__(470);
 
-const fileName = core.getInput('version-file');
+//const fileName = core.getInput('version-file');
+fileName = 'version.txt'
 
+
+const { exec } = __webpack_require__(129);
+exec('pwd', (err, stdout, stderr) => {
+  if (err) {
+    console.error(err)
+  } else {
+   console.log(`stdout: ${stdout}`);
+   console.log(`stderr: ${stderr}`);
+  }
+});
 
 try {
   if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
@@ -3239,7 +3250,7 @@ try {
   if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
   if (version.match(/^0\d+\./)) throw new Error("Major version can not be prefixed with 0");
   if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
-  console.
+  console.log("The version is "+version);
   core.setOutput("version",version);	
 } catch (err) {
   console.error(err)
@@ -3253,6 +3264,13 @@ try {
 /***/ (function(module) {
 
 module.exports = {"_from":"jison-lex@0.2.x","_id":"jison-lex@0.2.1","_inBundle":false,"_integrity":"sha1-rEuBXozOUTLrErXfz+jXB7iETf4=","_location":"/jison-lex","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"jison-lex@0.2.x","name":"jison-lex","escapedName":"jison-lex","rawSpec":"0.2.x","saveSpec":null,"fetchSpec":"0.2.x"},"_requiredBy":["/jison"],"_resolved":"https://registry.npmjs.org/jison-lex/-/jison-lex-0.2.1.tgz","_shasum":"ac4b815e8cce5132eb12b5dfcfe8d707b8844dfe","_spec":"jison-lex@0.2.x","_where":"D:\\ZeroWasteDevelopers\\action-read-base-version\\node_modules\\jison","author":{"name":"Zach Carter","email":"zach@carter.name","url":"http://zaa.ch"},"bin":{"jison-lex":"cli.js"},"bugs":{"url":"http://github.com/zaach/jison-lex/issues","email":"jison@librelist.com"},"bundleDependencies":false,"dependencies":{"lex-parser":"0.1.x","nomnom":"1.5.2"},"deprecated":false,"description":"lexical analyzer generator used by jison","devDependencies":{"test":"0.4.4"},"directories":{"lib":"lib","tests":"tests"},"engines":{"node":">=0.4"},"homepage":"http://jison.org","keywords":["jison","parser","generator","lexer","flex","tokenizer"],"main":"regexp-lexer","name":"jison-lex","repository":{"type":"git","url":"git://github.com/zaach/jison-lex.git"},"scripts":{"test":"node tests/all-tests.js"},"version":"0.2.1"};
+
+/***/ }),
+
+/***/ 129:
+/***/ (function(module) {
+
+module.exports = require("child_process");
 
 /***/ }),
 
