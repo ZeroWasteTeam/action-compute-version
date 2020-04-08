@@ -58,8 +58,9 @@ if( ! fs.existsSync(fileName)) {
 }
 
 try {
-  const data = fs.readFileSync(fileName, 'utf8')
-  console.log(data)
+  var version = fs.readFileSync(fileName, 'utf8');
+  version = version.trim();
+  console.log(">"+version+"<");	
 } catch (err) {
   console.error(err)
 }
