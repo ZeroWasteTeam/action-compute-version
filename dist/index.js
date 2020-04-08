@@ -3243,7 +3243,7 @@ try {
   core.setOutput("version",version);	
 } catch (err) {
   console.error(err)
-  core.setError(err.Message);
+  core.setFailed(err.message);
 }
 
 
