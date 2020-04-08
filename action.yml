@@ -6,7 +6,7 @@ inputs:
   version-file:
     description: 'File name of the version file'
     required: true
-    default: version.txt
+    default: ./version.txt
 
 outputs:
   version:
