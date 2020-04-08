@@ -3229,7 +3229,7 @@ const Regex = __webpack_require__(409);
 const core = __webpack_require__(470);
 
 //const fileName = core.getInput('version-file');
-fileName = 'version.txt'
+fileName = './version.txt'
 
 
 const { exec } = __webpack_require__(129);

@@ -3,7 +3,7 @@ const Regex = require('regex');
 const core = require('@actions/core');
 
 //const fileName = core.getInput('version-file');
-fileName = 'version.txt'
+fileName = './version.txt'
 
 
 const { exec } = require('child_process');
