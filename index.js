@@ -5,13 +5,19 @@ const core = require('@actions/core');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-//const fileName = core.getInput('version-file');
+const fileName = core.getInput('version-file');
+const isReleaseFlow = core.getInput('is-release-flow');
+const currentBranchName = core.getInput('current-branch');
+const defaultBranchName = core.getInput('default-branch-name');
+const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
+/*
 const fileName = './version.txt';
 const isReleaseFlow = true;
 const currentBranchName = 'master';
 const defaultBranchName = 'master';
 const releaseBranchPrefix = 'rel-';
+*/
 
 function getBaseVersion() {
 	if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
