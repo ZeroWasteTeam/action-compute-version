@@ -7,7 +7,8 @@ fileName = './version.txt'
 
 
 try {
-     if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
+	console.log("test1234");
+     //if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
      var version = fs.readFileSync(fileName, 'utf8');
      version = version.trim();
      if(!version.match(/^\d+\.\d+$/)) throw new Error("The "+version+" is not of the format MAJOR.MINOR");
