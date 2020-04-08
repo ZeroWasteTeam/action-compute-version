@@ -35,11 +35,11 @@ async function getLastVersionChangedCommit() {
 	return await executeBashCommand(command);
 }
 
-async function assertLastVersionChangeIsInDefaultBranch(){
-	var lastVersionModifiedCommit = await getLastVersionChangedCommit();
-	var command = `git branch -r --contains ${lastVersionModifiedCommit} | grep '^\s*origin/${defaultBranchName}$' | wc -l`;
+async function isCommitInOriginBranch(commit, branch){
+	var command = `git branch -r --contains ${commit} | grep '^\\s*origin/${branch}$' | wc -l`;
 	var result = await executeBashCommand(command);
-	if(result == 0 ) throw new Error(`The last version change ${lastVersionModifiedCommit} is not in the default branch: ${defaultBranchName}`);
+	if(result == 0 ) return false;
+	else return true;
 }
 
 async function getCheckedOutCommit() {
@@ -49,8 +49,26 @@ async function getCheckedOutCommit() {
 
 async function getVersion() {
 	var checkedOutCommit = await getCheckedOutCommit();
+	console.log(`The checked out commit is ${checkedOutCommit}`);
+	
 	var lastVersionChangeCommit = await getLastVersionChangedCommit();
-	console.log("Last version change commit is "+ lastVersionChangeCommit);
+	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
+	
+	console.log(`The build triggered for commit in branch ${currentBranchName}`);
+	
+	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) throw new Error('The last version change commit is not in default origin branch');
+	
+	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) throw new Error('The checked out commit is not in building origin branch');
+	
+	
+	//is version modified
+		//is version incremented else Error
+	
+		
+	
+	
+	//console.log(isCommitProper);
+	
 	//await assertLastVersionChangeIsInDefaultBranch();
 	//await assertCurrentCommitIsInTheSpecifiedBranch();
 	return checkedOutCommit;
