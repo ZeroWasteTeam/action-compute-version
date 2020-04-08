@@ -18,5 +18,8 @@
   "homepage": "https://github.com/ZeroWasteTeam/action-read-base-version#readme",
   "dependencies": {
     "file-system": "^2.2.2"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.1"
   }
 }
