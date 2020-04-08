@@ -11,6 +11,8 @@ const currentBranchName = core.getInput('current-branch');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
+
+
 /*
 const fileName = './version.txt';
 const isReleaseFlow = true;
@@ -18,6 +20,8 @@ const currentBranchName = 'master';
 const defaultBranchName = 'master';
 const releaseBranchPrefix = 'rel-';
 */
+
+if ( current-branch == "" ) throw new Error ( "The current branch input parameter has not been set");
 
 function getBaseVersion() {
 	if( ! fs.existsSync(fileName)) throw new Error(`The version file: ${fileName} does not exists`)
