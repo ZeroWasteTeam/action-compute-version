@@ -3,7 +3,7 @@ const fs = require('fs');
 const Regex = require('regex');
 const core = require('@actions/core');
 
-console.log("Hello from action");
+const fileName = core.getInput('version-file');
 
 if( ! fs.existsSync(fileName)) {
 	throw new Error('The file '+fileName+ ' does not exists')
