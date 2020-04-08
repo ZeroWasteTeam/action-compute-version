@@ -27,7 +27,7 @@ function getBaseVersion() {
 async function executeBashCommand(command) {
   const res = await exec(command);
   const { stdout, stderr } = res;
-  return stdout;
+  return stdout.replace(/\n/g,'').replace(/\r/g,'');
 }
 
 async function getLastVersionChangedCommit() {
@@ -47,6 +47,40 @@ async function getCheckedOutCommit() {
 	return await executeBashCommand(command);
 }
 
+async function getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString) {
+	var buildNumber = await getNumberOfCommitsSince(lastVersionChangeCommit);
+	if(buildNumber == 0) {
+		return `${baseVersion}.${buildNumber}`;
+	}else{
+		return `${baseVersion}.${buildNumber}-${dateString}-${shortCommitId}`;
+	}
+}
+
+async function getCheckoutCommitsDateString() {
+	var command = `git log -1 --format="%at" --date=iso | xargs -I{} date -u -d @{} +%Y-%m-%d-%H-%M-%S`;
+	return await executeBashCommand(command);
+}
+
+async function getShortCommitId(commitId) {
+	var command = `git rev-parse --short=7 ${commitId}`;
+	return await executeBashCommand(command);
+}
+
+async function getNumberOfCommitsSince(commit) {
+	var command= `git rev-list ${commit}..HEAD --count`;
+	return executeBashCommand(command);
+}
+
+async function getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString) {
+	var releaseName = currentBranchName.replace(releaseBranchPrefix, "").toLowerCase();
+	return `${baseVersion}-${releaseName}-${dateString}-${shortCommitId}`;
+}
+
+async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString) {
+	var releaseName = currentBranchName.replace(releaseBranchPrefix, "").toLowerCase();
+	return `${baseVersion}-test-${dateString}-${shortCommitId}`;
+}
+
 async function getVersion() {
 	var checkedOutCommit = await getCheckedOutCommit();
 	console.log(`The checked out commit is ${checkedOutCommit}`);
@@ -60,25 +94,14 @@ async function getVersion() {
 	
 	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) throw new Error('The checked out commit is not in building origin branch');
 	
-	
-	//is version modified
-		//is version incremented else Error
-	
-		
-	
-	
-	//console.log(isCommitProper);
-	
-	//await assertLastVersionChangeIsInDefaultBranch();
-	//await assertCurrentCommitIsInTheSpecifiedBranch();
-	return checkedOutCommit;
+	var baseVersion = getBaseVersion();
+	var shortCommitId = await getShortCommitId(checkedOutCommit);
+	var dateString = await getCheckoutCommitsDateString();
+	if( currentBranchName == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
+	if( isReleaseFlow && currentBranchName.startsWith(releaseBranchPrefix)) return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
+	return await getTestBranchBuildVersion(baseVersion, shortCommitId, dateString);
 }
 
-try {
-	var baseVersion = getBaseVersion();
-	console.log("The base version is "+baseVersion);
-	getVersion().then( x =>  console.log(x));
-} catch (err) {
-     console.error(err)
-     core.setFailed(err.message);
-}
+getVersion()
+.then( x =>  {  console.log(x); core.setOutput('version', x); })
+.catch( x => {console.error(x); core.setFailed(x.message)});

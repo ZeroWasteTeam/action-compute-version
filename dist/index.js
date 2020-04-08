@@ -3253,7 +3253,7 @@ function getBaseVersion() {
 async function executeBashCommand(command) {
   const res = await exec(command);
   const { stdout, stderr } = res;
-  return stdout;
+  return stdout.replace(/\n/g,'').replace(/\r/g,'');
 }
 
 async function getLastVersionChangedCommit() {
@@ -3261,11 +3261,11 @@ async function getLastVersionChangedCommit() {
 	return await executeBashCommand(command);
 }
 
-async function assertLastVersionChangeIsInDefaultBranch(){
-	var lastVersionModifiedCommit = await getLastVersionChangedCommit();
-	var command = `git branch -r --contains ${lastVersionModifiedCommit} | grep '^\s*origin/${defaultBranchName}$' | wc -l`;
+async function isCommitInOriginBranch(commit, branch){
+	var command = `git branch -r --contains ${commit} | grep '^\\s*origin/${branch}$' | wc -l`;
 	var result = await executeBashCommand(command);
-	if(result == 0 ) throw new Error(`The last version change ${lastVersionModifiedCommit} is not in the default branch: ${defaultBranchName}`);
+	if(result == 0 ) return false;
+	else return true;
 }
 
 async function getCheckedOutCommit() {
@@ -3273,21 +3273,64 @@ async function getCheckedOutCommit() {
 	return await executeBashCommand(command);
 }
 
-async function getVersion() {
-	var checkedOutCommit = await getCheckedOutCommit();
-	await assertLastVersionChangeIsInDefaultBranch();
-	await assertCurrentCommitIsInTheSpecifiedBranch();
-	return checkedOutCommit;
+async function getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString) {
+	var buildNumber = await getNumberOfCommitsSince(lastVersionChangeCommit);
+	if(buildNumber == 0) {
+		return `${baseVersion}.${buildNumber}`;
+	}else{
+		return `${baseVersion}.${buildNumber}-${dateString}-${shortCommitId}`;
+	}
 }
 
-try {
-	var baseVersion = getBaseVersion();
-	console.log("The base version is "+baseVersion);
-	getVersion().then( x =>  console.log(x));
-} catch (err) {
-     console.error(err)
-     core.setFailed(err.message);
+async function getCheckoutCommitsDateString() {
+	var command = `git log -1 --format="%at" --date=iso | xargs -I{} date -u -d @{} +%Y-%m-%d-%H-%M-%S`;
+	return await executeBashCommand(command);
 }
+
+async function getShortCommitId(commitId) {
+	var command = `git rev-parse --short=7 ${commitId}`;
+	return await executeBashCommand(command);
+}
+
+async function getNumberOfCommitsSince(commit) {
+	var command= `git rev-list ${commit}..HEAD --count`;
+	return executeBashCommand(command);
+}
+
+async function getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString) {
+	var releaseName = currentBranchName.replace(releaseBranchPrefix, "").toLowerCase();
+	return `${baseVersion}-${releaseName}-${dateString}-${shortCommitId}`;
+}
+
+async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString) {
+	var releaseName = currentBranchName.replace(releaseBranchPrefix, "").toLowerCase();
+	return `${baseVersion}-test-${dateString}-${shortCommitId}`;
+}
+
+async function getVersion() {
+	var checkedOutCommit = await getCheckedOutCommit();
+	console.log(`The checked out commit is ${checkedOutCommit}`);
+	
+	var lastVersionChangeCommit = await getLastVersionChangedCommit();
+	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
+	
+	console.log(`The build triggered for commit in branch ${currentBranchName}`);
+	
+	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) throw new Error('The last version change commit is not in default origin branch');
+	
+	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) throw new Error('The checked out commit is not in building origin branch');
+	
+	var baseVersion = getBaseVersion();
+	var shortCommitId = await getShortCommitId(checkedOutCommit);
+	var dateString = await getCheckoutCommitsDateString();
+	if( currentBranchName == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
+	if( isReleaseFlow && currentBranchName.startsWith(releaseBranchPrefix)) return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
+	return await getTestBranchBuildVersion(baseVersion, shortCommitId, dateString);
+}
+
+getVersion()
+.then( x =>  {  console.log(x); core.setOutput('version', x); })
+.catch( x => {console.error(x); core.setFailed(x.message)});
 
 
 /***/ }),
