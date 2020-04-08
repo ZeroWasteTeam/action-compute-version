@@ -6,16 +6,7 @@ const core = require('@actions/core');
 fileName = './version.txt'
 
 
-const { exec } = require('child_process');
-exec('pwd', (err, stdout, stderr) => {
-  if (err) {
-    console.error(err)
-  } else {
-   console.log(`stdout: ${stdout}`);
-   console.log(`stderr: ${stderr}`);
-   
-   
-   try {
+try {
      if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
      var version = fs.readFileSync(fileName, 'utf8');
      version = version.trim();
@@ -25,10 +16,7 @@ exec('pwd', (err, stdout, stderr) => {
      if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
      console.log("The version is "+version);
      core.setOutput("version",version);	
-   } catch (err) {
+} catch (err) {
      console.error(err)
      core.setFailed(err.message);
-   }
-  }
-});
-
+}
