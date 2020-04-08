@@ -1,0 +1,19 @@
+name: Read Base Version
+author: Nachiappan NK
+description: Reads the file version.txt and verifies if major version and minor version are available
+
+inputs:
+  version-file:
+    description: 'File name of the version file'
+    required: true
+    default: version.txt
+
+outputs:
+  version:
+    description: 'The major version and minor version specified in the file'
+
+runs:
+  using: 'node12'
+  main: 'index.js'
+
+
