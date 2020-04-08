@@ -95,7 +95,7 @@ async function getVersion() {
 	var checkedOutCommit = await getCheckedOutCommit();
 	console.log(`The checked out commit is ${checkedOutCommit}`);
 	
-	console.log(JSON.stringfy(github, null, "\t"));
+	console.log(JSON.stringify(github, null, "\t"));
 	
 	var lastVersionChangeCommit = await getLastVersionChangedCommit();
 	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
