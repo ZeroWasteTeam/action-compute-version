@@ -13,7 +13,7 @@ const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
 
-console.log(JSON.stringfy(github, null, "\t"))
+console.log(JSON.stringfy(github, null, "\t"));
 
 
 
