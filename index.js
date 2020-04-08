@@ -13,10 +13,6 @@ const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
 
-console.log(JSON.stringfy(github, null, "\t"));
-
-
-
 /*
 const fileName = './version.txt';
 const isReleaseFlow = true;
@@ -98,6 +94,8 @@ async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString)
 async function getVersion() {
 	var checkedOutCommit = await getCheckedOutCommit();
 	console.log(`The checked out commit is ${checkedOutCommit}`);
+	
+	console.log(JSON.stringfy(github, null, "\t"));
 	
 	var lastVersionChangeCommit = await getLastVersionChangedCommit();
 	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
