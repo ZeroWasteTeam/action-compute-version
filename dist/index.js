@@ -3224,29 +3224,26 @@ exports.SourceNode = __webpack_require__(54).SourceNode;
 /***/ 104:
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
-
 const fs = __webpack_require__(747);
 const Regex = __webpack_require__(409);
 const core = __webpack_require__(470);
 
-console.log("Hello from action");
+const fileName = core.getInput('version-file');
 
-var fileName = 'version.txt'
-
-if( ! fs.existsSync(fileName)) {
-	throw new Error('The file '+fileName+ ' does not exists')
-}
 
 try {
+  if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
   var version = fs.readFileSync(fileName, 'utf8');
   version = version.trim();
   if(!version.match(/^\d+\.\d+$/)) throw new Error("The "+version+" is not of the format MAJOR.MINOR");
   if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
   if (version.match(/^0\d+\./)) throw new Error("Major version can not be prefixed with 0");
   if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
+  console.
   core.setOutput("version",version);	
 } catch (err) {
   console.error(err)
+  core.setError(err.Message);
 }
 
 
