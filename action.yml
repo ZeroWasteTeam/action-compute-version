@@ -4,9 +4,24 @@ description: Reads the file version.txt and verifies if major version and minor 
 
 inputs:
   version-file:
-    description: 'File name of the version file'
+    description: 'File name of the version file eg: ./version.txt '
     required: true
     default: ./version.txt
+  is-release-flow:
+    description: 'The versioning stratergy supports release-flow and github-flow. Use true for release-flow false for github-flow'
+    required: true
+    default: true
+  current-branch:
+    description: 'The name of the branch from which the build has to be done'
+    required: true
+  default-branch-name:
+    description: 'The name of the default branch'
+    required: true
+    default: 'master'
+  release-branch-prefix:
+    description: 'The prefix used by release branch'
+    required: true
+    default: 'rel-'
 
 outputs:
   version:
