@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ZeroWasteTeam/action-read-base-version/issues"
   },
-  "homepage": "https://github.com/ZeroWasteTeam/action-read-base-version#readme"
+  "homepage": "https://github.com/ZeroWasteTeam/action-read-base-version#readme",
+  "dependencies": {
+    "fs": "0.0.1-security"
+  }
 }
