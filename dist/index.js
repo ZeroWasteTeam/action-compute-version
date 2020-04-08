@@ -3231,19 +3231,25 @@ const core = __webpack_require__(470);
 const util = __webpack_require__(669);
 const exec = util.promisify(__webpack_require__(129).exec);
 
-//const fileName = core.getInput('version-file');
+const fileName = core.getInput('version-file');
+const isReleaseFlow = core.getInput('is-release-flow');
+const currentBranchName = core.getInput('current-branch');
+const defaultBranchName = core.getInput('default-branch-name');
+const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
+/*
 const fileName = './version.txt';
 const isReleaseFlow = true;
 const currentBranchName = 'master';
 const defaultBranchName = 'master';
 const releaseBranchPrefix = 'rel-';
+*/
 
 function getBaseVersion() {
-	if( ! fs.existsSync(fileName)) throw new Error('The file '+fileName+ ' does not exists')
+	if( ! fs.existsSync(fileName)) throw new Error(`The version file: ${fileName} does not exists`)
 	var version = fs.readFileSync(fileName, 'utf8');
 	version = version.trim();
-	if(!version.match(/^\d+\.\d+$/)) throw new Error("The "+version+" is not of the format MAJOR.MINOR");
+	if(!version.match(/^\d+\.\d+$/)) throw new Error(`The version: ${version}" is not of the format MAJOR.MINOR`);
 	if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
 	if (version.match(/^0\d+\./)) throw new Error("Major version can not be prefixed with 0");
 	if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
@@ -3316,9 +3322,11 @@ async function getVersion() {
 	
 	console.log(`The build triggered for commit in branch ${currentBranchName}`);
 	
-	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) throw new Error('The last version change commit is not in default origin branch');
+	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) 
+		throw new Error(`The last version change commit: ${lastVersionChangeCommit} is not in default origin branch: ${defaultBranchName}`);
 	
-	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) throw new Error('The checked out commit is not in building origin branch');
+	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) 
+		throw new Error(`The checked out commit : ${checkedOutCommit} is not in building origin branch: ${currentBranchName}`);
 	
 	var baseVersion = getBaseVersion();
 	var shortCommitId = await getShortCommitId(checkedOutCommit);
