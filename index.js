@@ -1,10 +1,9 @@
 
 const fs = require('fs');
 const Regex = require('regex');
+const core = require('@actions/core');
 
 console.log("Hello from action");
-
-var fileName = 'version.txt'
 
 if( ! fs.existsSync(fileName)) {
 	throw new Error('The file '+fileName+ ' does not exists')
@@ -17,7 +16,7 @@ try {
   if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
   if (version.match(/^0\d+\./)) throw new Error("Major version can not be prefixed with 0");
   if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
-  console.log(">"+version+"<");	
+  core.setOutput("version",version);	
 } catch (err) {
   console.error(err)
 }
