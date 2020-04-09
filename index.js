@@ -92,29 +92,9 @@ async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString)
 }
 
 async function getVersion() {
-	
-	try{
-		console.log(">>github.context.eventName:"+github.context.eventName);
-	    console.log(">>github.context.ref:"+github.context.ref);
-	}catch(err){
-		
-	}
-	
-	try{
-		console.log(">>github.context.payload.client_payload.buildBranch:"+github.context.payload.client_payload.buildBranch);
-		console.log(">>github.context.payload.client_payload.buildSha:"+github.context.payload.client_payload.buildSha);
-	}catch(err){
-		
-	}
-	
-	
-	
-	
 	var checkedOutCommit = await getCheckedOutCommit();
 	console.log(`The checked out commit is ${checkedOutCommit}`);
-	
-	console.log(JSON.stringify(github, null, "\t"));
-	
+		
 	var lastVersionChangeCommit = await getLastVersionChangedCommit();
 	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
 	
