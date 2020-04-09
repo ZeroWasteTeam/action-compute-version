@@ -3718,7 +3718,6 @@ async function executeBashCommand(command) {
 
 async function getLastVersionChangedCommit() {
 	let command =`git log --format=format:%H -n 1 ${fileName}`;
-	console.log(command);
 	return await executeBashCommand(command);
 }
 
@@ -3731,7 +3730,6 @@ async function isCommitInOriginBranch(commit, branch){
 
 async function getCheckedOutCommit() {
 	let command =`git log --format=format:%H -n 1`;
-	console.log(command);
 	return await executeBashCommand(command);
 }
 
