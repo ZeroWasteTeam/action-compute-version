@@ -92,6 +92,13 @@ async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString)
 }
 
 async function getVersion() {
+	
+	console.log(">>github.context.eventName:"+github.context.eventName);
+	console.log(">>github.context.payload.client_payload.buildBranch:"+github.context.payload.client_payload.buildBranch);
+	console.log(">>github.context.payload.client_payload.buildSha:"+github.context.payload.client_payload.buildSha);
+	console.log(">>github.context.ref:"+github.context.ref);
+	
+	
 	var checkedOutCommit = await getCheckedOutCommit();
 	console.log(`The checked out commit is ${checkedOutCommit}`);
 	
