@@ -55,7 +55,8 @@ async function isCommitInOriginBranch(commit, branch){
 
 async function getCheckedOutCommit() {
 	var command =`git log --format=format:%H -n 1`;
-	return await executeBashCommand(">>"+command);
+	console.log(command);
+	return await executeBashCommand(command);
 }
 
 async function getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString) {
