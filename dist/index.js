@@ -3718,6 +3718,9 @@ async function executeBashCommand(command) {
 
 async function getLastVersionChangedCommit() {
 	var command =`git log --format=format:%H -n 1 ${fileName}`;
+	
+	console.log(command);
+	
 	return await executeBashCommand(command);
 }
 
