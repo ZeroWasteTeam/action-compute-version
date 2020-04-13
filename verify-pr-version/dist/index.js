@@ -532,7 +532,7 @@ async function isVersionModified() {
 
 async function verifyVersionChangeInPullRequest() {
 	if(baseBranch == defaultBranchName) {
-		var result = isVersionModified();
+		var result = await isVersionModified();
 		console.log("version modification result is "+result);
 		
 	} else {
@@ -542,8 +542,8 @@ async function verifyVersionChangeInPullRequest() {
 }
 
 verifyVersionChangeInPullRequest()
-.then( x =>  {  console.log(x); core.setOutput('version', x); })
-.catch( x => {console.error(x); core.setFailed(x.message)});
+.then( x =>  {  console.log(x); core.setFailed("For testing"); })
+.catch( x => {console.error(x); core.setFailed("For testing"); });
 
 //master
 	//is version modified
