@@ -3698,6 +3698,7 @@ const releaseBranchPrefix = 'rel-';
 */
 
 if ( currentBranchName == "" ) throw new Error ( "The current branch input parameter has not been set");
+currentBranchName=currentBranchName.replace('refs/heads/','');
 
 function getBaseVersion() {
 	if( ! fs.existsSync(fileName)) throw new Error(`The version file: ${fileName} does not exists`)
