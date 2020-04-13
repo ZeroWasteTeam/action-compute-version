@@ -19,9 +19,16 @@ async function executeBashCommand(command) {
     return stdout.replace(/\n/g,'').replace(/\r/g,'');
 }
 
+async function isVersionModified() {
+	let command = `git diff --name-only "${baseBranch}..${mergedRef}" version.txt | wc -l`;
+	var result = await executeBashCommand(command);
+	return result != 0;
+}
+
 async function verifyVersionChangeInPullRequest() {
 	if(baseBranch == defaultBranchName) {
-		
+		var result = isVersionModified();
+		console.log("version modification result is "+result);
 		
 	} else {
 		
