@@ -9,8 +9,6 @@ const defaultBranchName = core.getInput('default-branch-name');
 const baseRef = core.getInput('base-branch');
 const mergedRef = core.getInput('merged-ref');
 
-
-
 if ( baseRef == "" ) throw new Error ( "The base ref is not set");
 if ( mergedRef == "" ) throw new Error ( "The merged ref is not set");
 
