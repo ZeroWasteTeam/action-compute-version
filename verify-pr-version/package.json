@@ -1,0 +1,25 @@
+{
+  "name": "action-verify-pr-version",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "npx ncc build index.js -o dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZeroWasteTeam/action-verify-pr-version.git"
+  },
+  "author": "Nachiappan NK",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZeroWasteTeam/action-verify-pr-version/issues"
+  },
+  "homepage": "https://github.com/ZeroWasteTeam/action-verify-pr-version#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/github": "^2.1.1",
+    "@zeit/ncc": "^0.22.1"
+  }
+}

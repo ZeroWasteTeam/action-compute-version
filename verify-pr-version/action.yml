@@ -1,0 +1,29 @@
+name: Verify PR Version
+author: Nachiappan NK
+description: Reads the file version.txt and verifies if major version and minor version are available
+
+inputs:
+  
+  version-file:
+    description: 'File name of the version file eg: ./version.txt '
+    required: true
+    default: ./version.txt
+  
+  base-branch:
+    description: 'The base branch'
+    required: true
+    
+  merged-ref:
+    description: 'The merged-ref'
+    required: true
+  
+  default-branch-name:
+    description: 'The name of the default branch'
+    required: true
+    default: 'master'
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'  
+
+
