@@ -6,10 +6,10 @@ const exec = util.promisify(require('child_process').exec);
 
 const fileName = core.getInput('version-file');
 const defaultBranchName = core.getInput('default-branch-name');
-const baseRef = core.getInput('base-branch');
+const baseBranch = core.getInput('base-branch');
 const mergedRef = core.getInput('merged-ref');
 
-if ( baseRef == "" ) throw new Error ( "The base ref is not set");
+if ( baseBranch == "" ) throw new Error ( "The base branch is not set");
 if ( mergedRef == "" ) throw new Error ( "The merged ref is not set");
 
 
@@ -20,7 +20,7 @@ async function executeBashCommand(command) {
 }
 
 async function verifyVersionChangeInPullRequest() {
-	if(currentBranchName == defaultBranchName) {
+	if(baseBranch == defaultBranchName) {
 		
 		
 	} else {
