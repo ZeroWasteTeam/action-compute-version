@@ -27,7 +27,7 @@ async function executeBashCommand(command) {
 }
 
 async function isVersionModified() {
-	let command = `git diff --name-only "${baseBranch}..${mergedRef}" ${fileName} | wc -l`;
+	let command = `git diff --name-only "origin/${baseBranch}..${mergedRef}" ${fileName} | wc -l`;
 	let result = await executeBashCommand(command);
 	core.debug(`Executed '${command}' and the result is '${result}'`);
 	return result != 0;
