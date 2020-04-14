@@ -1,14 +1,14 @@
 const fs = require('fs');
-const Regex = require('regex');
+const regex = require('regex');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const versionFileName = core.getInput('version-file');
+const versionFileName = core.getInput('version-file-name');
 const isReleaseFlow = core.getInput('is-release-flow');
-const buildBranch = core.getInput('current-branch').replace('refs/heads/','');
+const buildBranch = core.getInput('build-branch').replace('refs/heads/','');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 

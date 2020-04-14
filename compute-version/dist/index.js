@@ -3675,16 +3675,16 @@ exports.SourceNode = __webpack_require__(54).SourceNode;
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 const fs = __webpack_require__(747);
-const Regex = __webpack_require__(409);
+const regex = __webpack_require__(409);
 const core = __webpack_require__(470);
 const github = __webpack_require__(469);
 
 const util = __webpack_require__(669);
 const exec = util.promisify(__webpack_require__(129).exec);
 
-const versionFileName = core.getInput('version-file');
+const versionFileName = core.getInput('version-file-name');
 const isReleaseFlow = core.getInput('is-release-flow');
-const buildBranch = core.getInput('current-branch').replace('refs/heads/','');
+const buildBranch = core.getInput('build-branch').replace('refs/heads/','');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
