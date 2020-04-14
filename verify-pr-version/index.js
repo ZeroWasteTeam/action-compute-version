@@ -4,14 +4,14 @@ const github = require('@actions/github');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const fileName = core.getInput('version-file');
+const versionFileName = core.getInput('version-file-name');
 const defaultBranchName = core.getInput('default-branch-name');
 const baseBranch = core.getInput('base-branch');
 const mergedSha = core.getInput('merged-ref');
 const originBaseBranch = 'origin/'+baseBranch;
 
 core.debug('Action started');
-core.debug(`Version file name is ${fileName}`);
+core.debug(`Version file name is ${versionFileName}`);
 core.debug(`Default branch name is ${defaultBranchName}`);
 core.debug(`The base branch is ${baseBranch}`);
 core.debug(`The merged sha is ${mergedSha}`);
@@ -29,7 +29,7 @@ async function ExecuteBashCommand(command) {
 }
 
 async function IsVersionModified() {
-	let command = `git diff --name-only "${originBaseBranch}..${mergedSha}" ${fileName} | wc -l`;
+	let command = `git diff --name-only "${originBaseBranch}..${mergedSha}" ${versionFileName} | wc -l`;
 	let result = await ExecuteBashCommand(command);
 	return result != 0;
 }
@@ -57,7 +57,7 @@ async function VerifyVersionChangeInPullRequest() {
 			
 			if(baseVersionOfModifiedSha == "") {
 				core.debug("Could not read the version information. This happens when version file : ${fileName} is not present");
-				throw new Error(`Could not read the version from ${fileName}`);
+				throw new Error(`Could not read the version from ${versionFileName}`);
 			}
 			ValidateBaseVersion(baseVersionOfModifiedSha);
 			let isValidBaseVersion = false;
@@ -96,7 +96,7 @@ function ValidateBaseVersion(version) {
 }
 
 async function GetBaseVersion(ref){
-	let command = `git show ${ref}:${fileName}`;
+	let command = `git show ${ref}:${versionFileName}`;
 	let result =  await ExecuteBashCommand(command);
 	return result.trim();
 }

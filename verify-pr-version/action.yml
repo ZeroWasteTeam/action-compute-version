@@ -4,7 +4,7 @@ description: Reads the file version.txt and verifies if major version and minor 
 
 inputs:
   
-  version-file:
+  version-file-name:
     description: 'File name of the version file eg: ./version.txt '
     required: true
     default: ./version.txt

@@ -4,7 +4,7 @@ description: Reads the file version.txt and verifies if major version and minor 
 
 inputs:
   
-  version-file:
+  version-file-name:
     description: 'File name of the version file eg: ./version.txt '
     required: true
     default: ./version.txt
@@ -14,7 +14,7 @@ inputs:
     required: true
     default: true
   
-  current-branch:
+  build-branch:
     description: 'The name of the branch from which the build has to be done'
     required: true
   
