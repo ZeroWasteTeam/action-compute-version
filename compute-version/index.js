@@ -8,18 +8,11 @@ const exec = util.promisify(require('child_process').exec);
 
 const fileName = core.getInput('version-file');
 const isReleaseFlow = core.getInput('is-release-flow');
-var currentBranchName = core.getInput('current-branch');
+let currentBranchName = core.getInput('current-branch');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
-
-/*
-const fileName = './version.txt';
-const isReleaseFlow = true;
-const currentBranchName = 'master';
-const defaultBranchName = 'master';
-const releaseBranchPrefix = 'rel-';
-*/
+core.debug(`Action started`);
 
 if ( currentBranchName == "" ) throw new Error ( "The current branch input parameter has not been set");
 currentBranchName=currentBranchName.replace('refs/heads/','');
@@ -38,7 +31,9 @@ function getBaseVersion() {
 async function executeBashCommand(command) {
   const res = await exec(command);
   const { stdout, stderr } = res;
-  return stdout.replace(/\n/g,'').replace(/\r/g,'');
+  let result = stdout.replace(/\n/g,'').replace(/\r/g,'');
+  core.debug(`The executed command: ${command}. The result is ${result}`);
+  return result;
 }
 
 async function getLastVersionChangedCommit() {
@@ -93,12 +88,12 @@ async function getTestBranchBuildVersion(baseVersion, shortCommitId, dateString)
 
 async function getVersion() {
 	let checkedOutCommit = await getCheckedOutCommit();
-	console.log(`The checked out commit is ${checkedOutCommit}`);
+	core.debug(`The checked out commit is ${checkedOutCommit}`);
 		
 	let lastVersionChangeCommit = await getLastVersionChangedCommit();
-	console.log(`The last version modified commit is ${lastVersionChangeCommit}`);
+	core.debug(`The last version modified commit is ${lastVersionChangeCommit}`);
 	
-	console.log(`The build triggered for commit in branch ${currentBranchName}`);
+	core.debug(`The build triggered for commit in branch ${currentBranchName}`);
 	
 	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) 
 		throw new Error(`The last version change commit: ${lastVersionChangeCommit} is not in default origin branch: ${defaultBranchName}`);
@@ -115,5 +110,5 @@ async function getVersion() {
 }
 
 getVersion()
-.then( x =>  {  console.log(x); core.setOutput('version', x); })
-.catch( x => {console.error(x); core.setFailed(x.message)});
+.then( x =>  { console.log(x); core.setOutput('version', x); })
+.catch( x => { console.error(x); core.setFailed(x.message)});
