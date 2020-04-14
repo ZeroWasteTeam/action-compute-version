@@ -3683,7 +3683,7 @@ const util = __webpack_require__(669);
 const exec = util.promisify(__webpack_require__(129).exec);
 
 const versionFileName = core.getInput('version-file-name');
-const isReleaseFlow = core.getInput('is-release-flow');
+const isReleaseFlow = JSON.parse(core.getInput('is-release-flow'));
 const buildBranch = core.getInput('build-branch').replace('refs/heads/','');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
