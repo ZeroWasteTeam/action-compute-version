@@ -601,7 +601,7 @@ function ValidateBaseVersion(version) {
 }
 
 async function GetBaseVersion(ref){
-	let command = `git show "${ref}:version.txt"`;
+	let command = `git show ${ref}:${fileName}`;
 	let result =  await ExecuteBashCommand(command);
 	return result.trim();
 }
