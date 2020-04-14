@@ -532,7 +532,7 @@ async function executeBashCommand(command) {
 }
 
 async function isVersionModified() {
-	let command = `git diff --name-only "${baseBranch}..${mergedRef}" version.txt | wc -l`;
+	let command = `git diff --name-only "${baseBranch}..${mergedRef}" ${fileName} | wc -l`;
 	let result = await executeBashCommand(command);
 	return result != 0;
 }
