@@ -541,7 +541,7 @@ async function IsVersionModified() {
 
 
 async function IsNonVersionFilesModified(isVersionModified) {
-	let command = `git diff --name-only "${baseBranch}..${mergedSha}"  | wc -l`;
+	let command = `git diff --name-only "${originBaseBranch}..${mergedSha}"  | wc -l`;
 	var result = await ExecuteBashCommand(command);
 	let numberOfNonVersionFilesModified =  isVersionModified? result - 1 : result;
 	return (numberOfNonVersionFilesModified != 0);
@@ -557,29 +557,28 @@ async function VerifyVersionChangeInPullRequest() {
 				core.debug(`Files other than version file are also modified`);
 				throw new Error("When modifying version file. No other file should be modified");
 			} 
-			let baseVersion = await GetBaseVersion(baseBranch);
-			baseVersion = baseVersion.trim();
-			let modifiedVersion = await GetBaseVersion(mergedSha);
-			modifiedVersion = modifiedVersion.trim();
+			let baseVersionOfOriginBaseBranch = await GetBaseVersion(originBaseBranch);
+			let baseVersionOfModifiedSha = await GetBaseVersion(mergedSha);
 			
-			if(modifiedVersion == "") {
+			if(baseVersionOfModifiedSha == "") {
 				core.debug("Could not read the version information. This happens when version file : ${fileName} is not present");
 				throw new Error(`Could not read the version from ${fileName}`);
 			}
-			ValidateBaseVersion(modifiedVersion);
+			ValidateBaseVersion(baseVersionOfModifiedSha);
 			let isValidBaseVersion = false;
+			
 			try{
-				ValidateBaseVersion(baseVersion);
+				ValidateBaseVersion(baseVersionOfOriginBaseBranch);
 				isValidBaseVersion = true;
 			}catch(err){
 				
 			}
 			
-			var baseVersionFloat = parseFloat(baseVersion);
-			var modifiedVersionFloat = parseFloat(modifiedVersion);
+			var versionFromOriginBaseBranchAsFloat = parseFloat(baseVersionOfOriginBaseBranch);
+			var versionFromModifiedShaAsFloat = parseFloat(baseVersionOfModifiedSha);
 			
-			if( baseVersionFloat >= modifiedVersionFloat) {
-				throw new Error(`The version is not incremented. The old base version is ${baseVersionFloat} the new is ${modifiedVersionFloat}`);
+			if( versionFromOriginBaseBranchAsFloat >= versionFromModifiedShaAsFloat) {
+				throw new Error(`The version is not incremented. The old base version is ${versionFromOriginBaseBranchAsFloat} the new is ${versionFromModifiedShaAsFloat}`);
 			}
 		}else{
 			core.debug(`Version file is not modified`);
@@ -603,7 +602,8 @@ function ValidateBaseVersion(version) {
 
 async function GetBaseVersion(ref){
 	let command = 'git show "${ref}:version.txt"'
-	return await ExecuteBashCommand(command);
+	let result =  await ExecuteBashCommand(command);
+	return result.trim();
 }
 
 VerifyVersionChangeInPullRequest()
