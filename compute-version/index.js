@@ -6,20 +6,19 @@ const github = require('@actions/github');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const fileName = core.getInput('version-file');
+const versionFileName = core.getInput('version-file');
 const isReleaseFlow = core.getInput('is-release-flow');
-let currentBranchName = core.getInput('current-branch');
+const buildBranch = core.getInput('current-branch').replace('refs/heads/','');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
 core.debug(`Action started`);
 
-if ( currentBranchName == "" ) throw new Error ( "The current branch input parameter has not been set");
-currentBranchName=currentBranchName.replace('refs/heads/','');
+if ( buildBranch == "" ) throw new Error ( "The current branch input parameter has not been set");
 
 function getBaseVersion() {
-	if( ! fs.existsSync(fileName)) throw new Error(`The version file: ${fileName} does not exists`)
-	let version = fs.readFileSync(fileName, 'utf8');
+	if( ! fs.existsSync(versionFileName)) throw new Error(`The version file: ${versionFileName} does not exists`)
+	let version = fs.readFileSync(versionFileName, 'utf8');
 	version = version.trim();
 	if(!version.match(/^\d+\.\d+$/)) throw new Error(`The version: ${version}" is not of the format MAJOR.MINOR`);
 	if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
@@ -37,7 +36,7 @@ async function executeBashCommand(command) {
 }
 
 async function getLastVersionChangedCommit() {
-	let command =`git log --format=format:%H -n 1 ${fileName}`;
+	let command =`git log --format=format:%H -n 1 ${versionFileName}`;
 	return await executeBashCommand(command);
 }
 
@@ -78,7 +77,7 @@ async function getNumberOfCommitsSince(commit) {
 }
 
 async function getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString) {
-	let releaseName = currentBranchName.replace(releaseBranchPrefix, "").toLowerCase();
+	let releaseName = buildBranch.replace(releaseBranchPrefix, "").toLowerCase();
 	return `${baseVersion}-${releaseName}-${dateString}-${shortCommitId}`;
 }
 
@@ -93,19 +92,27 @@ async function getVersion() {
 	let lastVersionChangeCommit = await getLastVersionChangedCommit();
 	core.debug(`The last version modified commit is ${lastVersionChangeCommit}`);
 	
-	core.debug(`The build triggered for commit in branch ${currentBranchName}`);
-	
-	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) 
+	core.debug(`The build triggered for commit in branch ${buildBranch}`);
+
+	if(!await isCommitInOriginBranch(checkedOutCommit, buildBranch)) {
+		console.log(`The last commit: ${lastVersionChangeCommit} is not in  build branch: origin\\${buildBranch}`);
+		throw new Error(`The checked out commit : ${checkedOutCommit} is not in building origin branch: ${buildBranch}`);
+	}else{
+		console.log(`The last commit: ${lastVersionChangeCommit} is in build branch: origin\\${buildBranch}`);
+	}
+
+	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) {
+		core.debug(`The latest version commit: ${lastVersionChangeCommit} is not in default - branch: origin\\${defaultBranchName}`);
 		throw new Error(`The last version change commit: ${lastVersionChangeCommit} is not in default origin branch: ${defaultBranchName}`);
-	
-	if(!await isCommitInOriginBranch(checkedOutCommit, currentBranchName)) 
-		throw new Error(`The checked out commit : ${checkedOutCommit} is not in building origin branch: ${currentBranchName}`);
+	} else {
+		core.debug(`The latest version commit: ${lastVersionChangeCommit} is in default - branch: origin\\${defaultBranchName}`);
+	}
 	
 	let baseVersion = getBaseVersion();
 	let shortCommitId = await getShortCommitId(checkedOutCommit);
 	let dateString = await getCheckoutCommitsDateString();
-	if( currentBranchName == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
-	if( isReleaseFlow && currentBranchName.startsWith(releaseBranchPrefix)) return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
+	if( buildBranch == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
+	if( isReleaseFlow && buildBranch.startsWith(releaseBranchPrefix)) return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
 	return await getTestBranchBuildVersion(baseVersion, shortCommitId, dateString);
 }
 
