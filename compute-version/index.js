@@ -12,6 +12,12 @@ const buildBranch = core.getInput('build-branch').replace('refs/heads/','');
 const defaultBranchName = core.getInput('default-branch-name');
 const releaseBranchPrefix = core.getInput('release-branch-prefix');
 
+core.debug(`The version file name is ${versionFileName}`);
+core.debug(`The value of is-release-flow is ${isReleaseFlow}`);
+core.debug(`The build-branch is ${buildBranch}`);
+core.debug(`The default-branch-name is ${defaultBranchName}`);
+core.debug(`The release-branch-prefix is ${releaseBranchPrefix}`);
+
 core.debug(`Action started`);
 
 if ( buildBranch == "" ) throw new Error ( "The current branch input parameter has not been set");
