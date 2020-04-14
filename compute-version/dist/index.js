@@ -3777,10 +3777,10 @@ async function getVersion() {
 	core.debug(`The build triggered for commit in branch ${buildBranch}`);
 
 	if(!await isCommitInOriginBranch(checkedOutCommit, buildBranch)) {
-		console.log(`The last commit: ${lastVersionChangeCommit} is not in  build branch: origin\\${buildBranch}`);
+		core.debug(`The last commit: ${lastVersionChangeCommit} is not in  build branch: origin\\${buildBranch}`);
 		throw new Error(`The checked out commit : ${checkedOutCommit} is not in building origin branch: ${buildBranch}`);
 	}else{
-		console.log(`The last commit: ${lastVersionChangeCommit} is in build branch: origin\\${buildBranch}`);
+		core.debug(`The last commit: ${lastVersionChangeCommit} is in build branch: origin\\${buildBranch}`);
 	}
 
 	if(!await isCommitInOriginBranch(lastVersionChangeCommit, defaultBranchName)) {
@@ -3794,13 +3794,17 @@ async function getVersion() {
 	let shortCommitId = await getShortCommitId(checkedOutCommit);
 	let dateString = await getCheckoutCommitsDateString();
 	if( buildBranch == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
-	if( isReleaseFlow && buildBranch.startsWith(releaseBranchPrefix)) return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
+	if( isReleaseFlow && buildBranch.startsWith(releaseBranchPrefix)){
+		core.debug(`Generating a release build version`);
+		core.debug(`The value of is ${isReleaseFlow}`);
+		return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
+	} 
 	return await getTestBranchBuildVersion(baseVersion, shortCommitId, dateString);
 }
 
 getVersion()
-.then( x =>  { console.log(x); core.setOutput('version', x); })
-.catch( x => { console.error(x); core.setFailed(x.message)});
+.then( x =>  { core.debug(x); core.setOutput('version', x); })
+.catch( x => { core.error(x); core.setFailed(x.message)});
 
 
 /***/ }),
