@@ -607,8 +607,8 @@ async function GetBaseVersion(ref){
 }
 
 VerifyVersionChangeInPullRequest()
-.then( x =>  {  console.log(`There is no problem in versioning!!!`); core.setFailed("For testing"); })
-.catch( x => {console.error(x); core.setFailed("For testing"); });
+.then( x =>  {  console.log(`There is no problem in versioning!!!`); })
+.catch( x => {  console.error(x); core.setFailed(x.message); });
 
 
 /***/ }),
