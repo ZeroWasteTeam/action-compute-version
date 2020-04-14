@@ -7,38 +7,38 @@ const exec = util.promisify(require('child_process').exec);
 const fileName = core.getInput('version-file');
 const defaultBranchName = core.getInput('default-branch-name');
 const baseBranch = core.getInput('base-branch');
-const mergedRef = core.getInput('merged-ref');
+const mergedSha = core.getInput('merged-ref');
+const originBaseBranch = 'origin/'+baseBranch;
 
 core.debug('Action started');
 core.debug(`Version file name is ${fileName}`);
 core.debug(`Default branch name is ${defaultBranchName}`);
 core.debug(`The base branch is ${baseBranch}`);
-core.debug(`The merged sha is ${mergedRef}`);
-
+core.debug(`The merged sha is ${mergedSha}`);
+core.debug(`The origin base branch is  ${originBaseBranch}`);
 
 if ( baseBranch == "" ) throw new Error ( "The base branch is not set");
-if ( mergedRef == "" ) throw new Error ( "The merged ref is not set");
+if ( mergedSha == "" ) throw new Error ( "The merged ref is not set");
 
-
-async function executeBashCommand(command) {
+async function executeBashCommand(command) {	
     const res = await exec(command);
     const { stdout, stderr } = res;
-    return stdout.replace(/\n/g,'').replace(/\r/g,'');
+    let result = stdout.replace(/\n/g,'').replace(/\r/g,'');
+	core.debug(`Executed command: ${command} and the result: ${result}`);
+	return result;
 }
 
 async function isVersionModified() {
-	let command = `git diff --name-only "origin/${baseBranch}..${mergedRef}" ${fileName} | wc -l`;
-	let result = await executeBashCommand(command);
-	core.debug(`Executed '${command}' and the result is '${result}'`);
+	let command = `git diff --name-only "${originBaseBranch}..${mergedSha}" ${fileName} | wc -l`;
+	let result = await executeBashCommand(command);s
 	return result != 0;
 }
 
 
-async function isNonVersionFilesModified() {
-	let command = `git diff --name-only "${baseBranch}..${mergedRef}"  | wc -l`;
+async function isNonVersionFilesModified(isVersionModified) {
+	let command = `git diff --name-only "${baseBranch}..${mergedSha}"  | wc -l`;
 	var result = await executeBashCommand(command);
-	let isVersionFileModified = await isVersionModified();
-	let numberOfNonVersionFilesModified =  isVersionFileModified? result - 1 : result;
+	let numberOfNonVersionFilesModified =  isVersionModified? result - 1 : result;
 	return (numberOfNonVersionFilesModified != 0);
 }
 
@@ -48,13 +48,13 @@ async function verifyVersionChangeInPullRequest() {
 		core.debug(`Base branch and default branch name is same: ${baseBranch}`);
 		if(await isVersionModified()){
 			core.debug(`The version file is modified`);
-			if(await isNonVersionFilesModified()){
+			if(await isNonVersionFilesModified(isVersionModified = true)){
 				core.debug(`Files other than version file are also modified`);
 				throw new Error("When modifying version file. No other file should be modified");
 			} 
 			let baseVersion = await getBaseVersion(baseBranch);
 			baseVersion = baseVersion.trim();
-			let modifiedVersion = await getBaseVersion(mergedRef);
+			let modifiedVersion = await getBaseVersion(mergedSha);
 			modifiedVersion = modifiedVersion.trim();
 			
 			if(modifiedVersion == "") {
