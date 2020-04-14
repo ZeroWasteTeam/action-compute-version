@@ -73,7 +73,7 @@ async function VerifyVersionChangeInPullRequest() {
 			var versionFromModifiedShaAsFloat = parseFloat(baseVersionOfModifiedSha);
 			
 			if( versionFromOriginBaseBranchAsFloat >= versionFromModifiedShaAsFloat) {
-				throw new Error(`The version is not incremented. The old base version is ${versionFromOriginBaseBranchAsFloat} the new is ${versionFromModifiedShaAsFloat}`);
+				throw new Error(`The version file is modified but not incremented. The old base version is ${versionFromOriginBaseBranchAsFloat} the new is ${versionFromModifiedShaAsFloat}`);
 			}
 		}else{
 			core.debug(`Version file is not modified`);
@@ -88,7 +88,7 @@ async function VerifyVersionChangeInPullRequest() {
 }
 
 function ValidateBaseVersion(version) {	
-	if(!version.match(/^\d+\.\d+$/)) throw new Error(`The version: ${version}" is not of the format MAJOR.MINOR`);
+	if(!version.match(/^\d+\.\d+$/)) throw new Error(`The version: ${version} is not of the format MAJOR.MINOR`);
 	if (version == '0.0') throw new Error('0.0 is not a valid version. Either major version or minor version has to be non zero');
 	if (version.match(/^0\d+\./)) throw new Error("Major version can not be prefixed with 0");
 	if (version.match(/\.0\d+$/)) throw new Error("Minor version can not be prefixed with 0");
