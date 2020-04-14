@@ -3796,7 +3796,7 @@ async function getVersion() {
 	if( buildBranch == defaultBranchName ) return await getDefaultBranchBuildVersion(baseVersion, lastVersionChangeCommit, shortCommitId, dateString);
 	if( isReleaseFlow && buildBranch.startsWith(releaseBranchPrefix)){
 		core.debug(`Generating a release build version`);
-		core.debug(`The value of is ${isReleaseFlow}`);
+		core.debug(`The value of is ${isReleaseFlow} typeof is ${typeof(isReleaseFlow)}`);
 		return await getReleaseBranchBuildVersion(baseVersion, shortCommitId, dateString);
 	} 
 	return await getTestBranchBuildVersion(baseVersion, shortCommitId, dateString);
